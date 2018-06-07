@@ -1,0 +1,24 @@
+
+
+  var posts;
+  function setPosts(value){
+    posts = value;
+  }
+  var authors;
+  function setAuthors(value) {
+    authors = value;
+  }
+
+  function ajaxGet(url,callback) {
+    var xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function() {
+      if (this.readyState == 4 && this.status == 200) {
+        callback(JSON.parse(this.responseText));
+      }
+    };
+    xhr.open('GET', url);
+    xhr.send();
+  }
+
+  ajaxGet('https://jsonplaceholder.typicode.com/posts',setPosts)
+  ajaxGet('https://jsonplaceholder.typicode.com/users',setAuthors);
