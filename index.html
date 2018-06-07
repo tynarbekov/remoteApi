@@ -3,15 +3,39 @@
   <head>
     <meta charset="utf-8">
     <title>remoteApi</title>
+    <link rel="stylesheet" href="style/style.css">
+
   </head>
   <body>
-    <div class="container" id="postList">
-
+    <div class="container">
+      <div class="row">
+        <div class="column" id="postList"></div>
+        <div class="column">Search By: <br>
+            Author: <input type="radio" name="name" value="author" id="author" checked>
+            Title: <input type="radio" name="name" value="title" id="title">
+            Body: <input type="radio" name="name" value="body" id="body"><br>
+            <input type="text" placeholder="Search.." name="search" id="searchText">
+            <input type="submit" name="search" value="Search" onclick="searchBy()">
+        </div>
+      </div>
     </div>
   </body>
 </html>
 <script src="js/index.js"></script>
 <script type="text/javascript">
+  function searchBy(){
+    if (document.getElementById('author').checked) {
+      search('author');
+    }
+    else if(document.getElementById('title').checked) {
+      search('title');
+    }
+    else if(document.getElementById('body').checked) {
+      search('body');
+    }
+
+  }
+
   getPostList();
 </script>
 
