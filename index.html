@@ -8,35 +8,62 @@
   </head>
   <body>
     <div class="container">
-      <div class="row">
+      <div class="row" >
         <div class="column" id="postList"></div>
-        <div class="column">Search By: <br>
+        <div class="column" id="search">Search By: <br>
             Author: <input type="radio" name="name" value="author" id="author" checked>
             Title: <input type="radio" name="name" value="title" id="title">
             Body: <input type="radio" name="name" value="body" id="body"><br>
             <input type="text" placeholder="Search.." name="search" id="searchText">
             <input type="submit" name="search" value="Search" onclick="searchBy()">
+            <div class="" id="searchResult">
+
+            </div>
         </div>
+      </div>
+      <div class="row" id="postInfo" style="display: none">
+          <h1>
+            <a href="#" id="homePage" onclick="homePage()">Home Page</a>
+          </h1>
+          <h2 id="updated"></h2>
+
+          <h3 id="postTitle"></h3>
+          <h3 id="postBody"></h3>
+          <h3 id="authorName"></h3>
+          <h3 id="username"></h3>
+          <h3 id="email"></h3>
+          <h3 id="address"></h3>
+          <h3 id="phone"></h3>
+          <h3 id="website"></h3>
+          <h3 id="company"></h3>
+          <button type="button" name="button" onclick="editPost(location.href)"><h2>EDIT</h2></button>
+          <div class="" id="editPost" style="display: none">
+            Post Title: <input type="text" name="" value="" id="editPostTitle"><br>
+            Post Body: <textarea id="editPostBody" name="description" value="" style="width: 95%;height: 200px;"></textarea>
+            <button type="button" name="button" onclick="updatePost(location.href)"><h2>UPDATE</h2></button>
+          </div>
       </div>
     </div>
   </body>
 </html>
 <script src="js/index.js"></script>
 <script type="text/javascript">
-  function searchBy(){
-    if (document.getElementById('author').checked) {
-      search('author');
-    }
-    else if(document.getElementById('title').checked) {
-      search('title');
-    }
-    else if(document.getElementById('body').checked) {
-      search('body');
-    }
-
-  }
-
   getPostList();
+
+
+
+  // function searchBy(){
+  //   if (document.getElementById('author').checked) {
+  //     search('author');
+  //   }
+  //   else if(document.getElementById('title').checked) {
+  //     search('title');
+  //   }
+  //   else if(document.getElementById('body').checked) {
+  //     search('body');
+  //   }
+  // }
+
 </script>
 
 

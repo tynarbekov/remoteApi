@@ -1,6 +1,5 @@
 var postList = [];
 var authorList = [];
-var storedPosts;
 
 function ajaxGet(url) {
   return new Promise(function(resolve, reject) {
@@ -61,32 +60,34 @@ function callAjax(){
         }
       }
     }
-    toStorage();
     outputHtml();
   }
 
-  function toStorage(){
-    localStorage.setItem("posts",JSON.stringify(postList))
-    storedPosts = JSON.parse(localStorage.getItem("posts"))
-  }
-
   function outputHtml(){
-    for (var i = 0; i < storedPosts.length; i++) {
-      title = "Title: ".bold() + "<a href='post.html?postId=" + storedPosts[i].id + "'>" + storedPosts[i].title + "</a>";
-      author = "Author: ".bold() + storedPosts[i].userInfo.name;
-      document.getElementById("postList").innerHTML+= title + "<br>"   + author + "<br>" + "---" + "<br>";
+    document.getElementById("postList").innerHTML="";
+    for (var i = 0; i < postList.length; i++) {
+      title = "Title: ".bold() + "<a href='#" + postList[i].id + "' onclick=outputPostInfo(" + postList[i].id +") >" + postList[i].title + "</a>";
+      author = "Author: ".bold() + postList[i].userInfo.name;
+      destroy = "Delete: ".bold() + postList[i].id;
+      document.getElementById("postList").innerHTML+= title + "<br>"   + author + "<br>";
+      document.getElementById("postList").innerHTML+= "<a href='#'" + "onclick=destroyPost(" + postList[i].id + ")" +">" + "DELETE" + "</a>"  + "<br> " + "---" + "<br>";
     }
   }
 
-  function getPostInfo(url){
-    url = url.split("=").pop();
-    url = parseInt(url);
-    var postInfo = JSON.parse(localStorage.getItem("posts"));
-    var post = postInfo.find( post => post.id === url );
-    outputPostInfo(post);
+  function destroyPost(postId){
+    var getPostId = postList.findIndex(function(post) {
+      return post.id == postId;
+    });
+    postList.splice(getPostId,1);
+    outputHtml();
   }
 
-  function outputPostInfo(post){
+  function outputPostInfo(postId){
+    postId = parseInt(postId)
+    document.getElementById("postList").style.display = 'none';
+    document.getElementById("search").style.display = 'none';
+    document.getElementById("postInfo").style.display = 'block';
+    var post = postList.find(post => post.id === postId);
     title = "Title: " + post.title;
     body = "Body: " + post.body;
     author = "Author: " + post.userInfo.name;
@@ -101,30 +102,97 @@ function callAjax(){
     website = "Website: " + post.userInfo.website;
     company = "Company Name: " + post.userInfo.company.name + ", catchPhrase: " + post.userInfo.company.catchPhrase + ", bs: " + post.userInfo.company.bs;
 
-    document.getElementById("postTitle").innerHTML+= title;
-    document.getElementById("postBody").innerHTML+= body;
-    document.getElementById("authorName").innerHTML+= author;
-    document.getElementById("username").innerHTML+= username;
-    document.getElementById("email").innerHTML+= email;
-    document.getElementById("address").innerHTML+= address;
-    document.getElementById("phone").innerHTML+= phone;
-    document.getElementById("website").innerHTML+= website;
-    document.getElementById("company").innerHTML+= company;
+    document.getElementById("postTitle").innerHTML = title;
+    document.getElementById("postBody").innerHTML = body;
+    document.getElementById("authorName").innerHTML = author;
+    document.getElementById("username").innerHTML = username;
+    document.getElementById("email").innerHTML = email;
+    document.getElementById("address").innerHTML = address;
+    document.getElementById("phone").innerHTML = phone;
+    document.getElementById("website").innerHTML = website;
+    document.getElementById("company").innerHTML = company;
 
   }
 
+  function homePage(){
+    document.getElementById("postList").style.display = 'block';
+    document.getElementById("search").style.display = 'block';
+    document.getElementById("postInfo").style.display = 'none';
+    document.getElementById("editPost").style.display = "none"
 
-  function search(by){
-    
+  }
+
+  function searchBy(){
+    var searchText = document.getElementById("searchText").value;
+    var checked = document.querySelector('input[name = "name"]:checked').value;
+    searchStringInArray(searchText,checked);
+  }
+
+  function searchStringInArray (searchText,checked) {
+    var foundPost = [];
+    for (var j=0; j<postList.length; j++) {
+      if (checked == 'author') {
+        if (postList[j].userInfo.name.match(searchText)){
+          foundPost.push(j);
+        }
+      }
+      else if (checked == 'title') {
+        if (postList[j].title.match(searchText)){
+          foundPost.push(j);
+        }
+      }
+      else if (checked == 'body') {
+        if (postList[j].body.match(searchText)){
+          foundPost.push(j);
+        }
+      }
+    }
+      searchResultOutput(foundPost);
+      return ;
+  }
+
+  function searchResultOutput(foundPost){
+    document.getElementById("searchResult").innerHTML = "";
+    if (foundPost.length <= 0) {
+      document.getElementById("searchResult").innerHTML+= "NOT FOUND";
+    }
+    else {
+      for (var i = 0; i < foundPost.length; i++) {
+        title = "Title: ".bold() + "<a href='#" + postList[foundPost[i]].id + "' onclick=outputPostInfo(" + postList[foundPost[i]].id +") >" + postList[foundPost[i]].title + "</a>";
+        author = "Author: ".bold() + postList[foundPost[i]].userInfo.name;
+        document.getElementById("searchResult").innerHTML+= title + "<br>";
+        document.getElementById("searchResult").innerHTML+= author + "<br>" + "---" + "<br>";
+
+      }
+    }
   }
 
 
+  function editPost(url){
+    document.getElementById("editPost").style.display = "block"
+    var postId = url.substr(url.length - 1);
+    var getPostId = postList.findIndex(function(post) {
+      return post.id == postId;
+    });
+    document.getElementById("editPostTitle").value = postList[getPostId].title;
+    document.getElementById("editPostBody").value = postList[getPostId].body;
+  }
 
 
+  function updatePost(url){
+    var postId = url.substr(url.length - 1);
+    var getPostId = postList.findIndex(function(post) {
+      return post.id == postId;
+    })
+    var editTitle =  document.getElementById("editPostTitle").value;
+    var editBody = document.getElementById("editPostBody").value;
 
+    postList[getPostId].title = editTitle;
+    postList[getPostId].body = editBody;
+    outputHtml();
+    outputPostInfo(postId);
+    document.getElementById("editPost").style.display = "none";
+    document.getElementById("updated").innerHTML = "Updated";
+    document.getElementById("updated").style.color = "green";
 
-
-
-
-
-  //
+  }
